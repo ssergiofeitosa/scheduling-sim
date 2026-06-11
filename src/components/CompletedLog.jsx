@@ -37,13 +37,15 @@ export default function CompletedLog({ completedProcesses = [], isCompact = fals
             </div>
           ) : (
             <div className="flex flex-wrap gap-1.5 py-1">
-              <AnimatePresence>
+               <AnimatePresence>
                 {completedProcesses.map((proc) => (
                   <motion.div
                     key={proc.id}
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ opacity: 0 }}
+                    layoutId={`process-card-${proc.id}`}
+                    initial={{ scale: 0.8 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0.8 }}
+                    transition={{ type: 'tween', duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
                     className="flex h-7 w-7 items-center justify-center rounded-lg text-xs font-black shadow-sm shrink-0"
                     style={{
                       backgroundColor: proc.color + '15',

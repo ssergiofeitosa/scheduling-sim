@@ -317,7 +317,50 @@ function useScheduler() {
     const currentTick = s.tick;
     const q = readyQueueRef.current;
 
+    // ── 0. Completion hold ─────────────────────────────────────────────
+    // If the current process was marked as completing on the previous tick,
+    // finalize it now.  This gives the UI a full tick to render the 100%
+    // progress bar before the process disappears.
+    if (proc && proc._completing) {
+      const finalProc = { ...proc };
+      delete finalProc._completing;
+      finalProc.status = ProcessStatus.COMPLETED;
+
+      const turnaround = finalProc.completionTick - finalProc.arrivalTick;
+
+      setCurrentProcess(null);
+      stateRef.current.currentProcess = null;
+
+      setCompletedProcesses((prev) => [...prev, finalProc]);
+      stateRef.current.completedProcesses = [
+        ...stateRef.current.completedProcesses,
+        finalProc,
+      ];
+
+      setProcesses((prev) =>
+        prev.map((p) => (p.id === finalProc.id ? { ...finalProc } : p))
+      );
+
+      appendLog(
+        currentTick,
+        `${finalProc.id} concluído (retorno=${turnaround} ciclos)`,
+        'success'
+      );
+
+      // Advance clock and return — next process dispatches on the next tick.
+      setTick((prev) => {
+        const next = prev + 1;
+        stateRef.current.tick = next;
+        return next;
+      });
+      return;
+    }
+
     // ── 1. Dispatch ────────────────────────────────────────────────────
+    // If the CPU is idle and the ready queue has processes, dispatch the
+    // next one.  We then RETURN so that the newly dispatched process is
+    // rendered in the CPU for at least one full tick before any execution
+    // happens.  This ensures even burstTime=1 processes are visible.
     if (!proc && !q.isEmpty()) {
       let nextProcess;
 
@@ -355,6 +398,14 @@ function useScheduler() {
         syncQueueDisplay();
         appendLog(currentTick, `${proc.id} despachado para a CPU`, 'info');
       }
+
+      // Advance clock and return — execution starts next tick.
+      setTick((prev) => {
+        const next = prev + 1;
+        stateRef.current.tick = next;
+        return next;
+      });
+      return;
     }
 
     // ── 2. Execute ─────────────────────────────────────────────────────
@@ -372,29 +423,17 @@ function useScheduler() {
       }
 
       // ── 3. Completion check ──────────────────────────────────────────
+      // Instead of immediately removing, mark as _completing so the UI
+      // gets one tick to show the 100% progress bar.
       if (updatedProc.remainingTime <= 0) {
-        updatedProc.status = ProcessStatus.COMPLETED;
         updatedProc.completionTick = currentTick + 1;
+        updatedProc._completing = true;
 
-        const turnaround = updatedProc.completionTick - updatedProc.arrivalTick;
-
-        setCurrentProcess(null);
-        stateRef.current.currentProcess = null;
-
-        setCompletedProcesses((prev) => [...prev, updatedProc]);
-        stateRef.current.completedProcesses = [
-          ...stateRef.current.completedProcesses,
-          updatedProc,
-        ];
+        setCurrentProcess(updatedProc);
+        stateRef.current.currentProcess = updatedProc;
 
         setProcesses((prev) =>
           prev.map((p) => (p.id === updatedProc.id ? { ...updatedProc } : p))
-        );
-
-        appendLog(
-          currentTick,
-          `${updatedProc.id} concluído (retorno=${turnaround} ciclos)`,
-          'success'
         );
       }
       // ── 4. Preemption check (Round Robin) ────────────────────────────

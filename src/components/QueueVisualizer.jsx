@@ -36,13 +36,14 @@ export default function QueueVisualizer({ queue, algorithm, isProjectionMode }) 
                 layoutId={`queue-${proc.id}`}
                 initial={{ x: 80, opacity: 0, scale: 0.8 }}
                 animate={{ x: 0, opacity: 1, scale: 1 }}
-                exit={{ x: -80, opacity: 0, scale: 0.8 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+                exit={{ x: -80, scale: 0.8 }}
+                transition={{ type: 'tween', duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
                 className="group relative flex shrink-0 items-center gap-3"
               >
                 {/* Process card */}
                 <motion.div
                   layoutId={`process-card-${proc.id}`}
+                  transition={{ type: 'tween', duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
                   className={`transition-all flex flex-col justify-between items-center rounded-xl border bg-white shadow-sm transition-colors ${
                     isProjectionMode
                       ? 'w-44 h-[110px] p-3.5 border-slate-300 border-2'

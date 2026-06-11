@@ -43,14 +43,10 @@ export default function CpuMonitor({ currentProcess }) {
 
         {/* Content */}
         <div className="relative min-h-[120px] flex items-center justify-center">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="popLayout">
             {isRunning ? (
               <motion.div
                 key={currentProcess.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
                 className="w-full"
               >
                 {/* Process info card - flying target */}
@@ -61,7 +57,7 @@ export default function CpuMonitor({ currentProcess }) {
                     borderLeftWidth: 4,
                     borderLeftColor: currentProcess.color,
                   }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                  transition={{ type: 'tween', duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
                 >
                   <span
                     className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-bold shadow-sm"
@@ -83,7 +79,13 @@ export default function CpuMonitor({ currentProcess }) {
                 </motion.div>
 
                 {/* Progress bar */}
-                <div className="space-y-2">
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-2"
+                >
                   <div className="flex items-center justify-between text-xs font-semibold">
                     <span className="text-slate-400">Progresso</span>
                     <span className="font-mono text-slate-700">
@@ -110,7 +112,7 @@ export default function CpuMonitor({ currentProcess }) {
                       </span>
                     </span>
                   </div>
-                </div>
+                </motion.div>
               </motion.div>
             ) : (
               <motion.div

@@ -148,15 +148,22 @@ export default function HeapVisualizer({
                 {edges.map((e, idx) => (
                   <motion.line
                     key={idx}
-                    x1={e.x1}
-                    y1={e.y1}
-                    x2={e.x2}
-                    y2={e.y2}
+                    animate={{
+                      x1: e.x1,
+                      y1: e.y1,
+                      x2: e.x2,
+                      y2: e.y2,
+                      opacity: 1
+                    }}
                     stroke="rgba(79,70,229,0.15)"
                     strokeWidth={2}
-                    initial={{ pathLength: 0, opacity: 0 }}
-                    animate={{ pathLength: 1, opacity: 1 }}
-                    transition={{ duration: 0.5, delay: idx * 0.05 }}
+                    initial={{ opacity: 0 }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 80,
+                      damping: 18,
+                      mass: 1.1
+                    }}
                   />
                 ))}
               </svg>
@@ -174,18 +181,22 @@ export default function HeapVisualizer({
                     layout
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0, opacity: 0 }}
+                    exit={{ scale: 0 }}
                     transition={{
-                      type: 'spring',
-                      stiffness: 350,
-                      damping: 25,
-                      delay: idx * 0.05,
+                      layout: {
+                        type: 'spring',
+                        stiffness: 80,
+                        damping: 18,
+                        mass: 1.1
+                      },
+                      default: {
+                        type: 'spring',
+                        stiffness: 250,
+                        damping: 22,
+                        delay: idx * 0.03,
+                      }
                     }}
-                    className={`absolute flex flex-col items-center justify-center rounded-2xl border-2 transition-all duration-300 ${
-                      isHighlighted
-                        ? 'border-amber-400 bg-amber-50 shadow-md shadow-amber-200/50'
-                        : 'border-slate-200 bg-slate-50/50 shadow-sm hover:border-slate-300'
-                    }`}
+                    className="absolute"
                     style={{
                       width: NODE_W,
                       height: NODE_H,
@@ -193,32 +204,42 @@ export default function HeapVisualizer({
                       top: pos.y,
                     }}
                   >
-                    <span
-                      className="font-black truncate w-full text-center"
-                      style={{ 
-                        color: proc.color,
-                        fontSize: `${Math.round((isProjectionMode ? 13 : 11) * scale)}px`
-                      }}
+                    <motion.div
+                      layoutId={`process-card-${proc.id}`}
+                      transition={{ type: 'tween', duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
+                      className={`w-full h-full flex flex-col items-center justify-center rounded-2xl border-2 transition-all duration-300 ${
+                        isHighlighted
+                          ? 'border-amber-400 bg-amber-50 shadow-md shadow-amber-200/50'
+                          : 'border-slate-200 bg-slate-50/50 shadow-sm hover:border-slate-300'
+                      }`}
                     >
-                      {isProjectionMode ? (proc.name || `Processo ${proc.id}`) : `P${proc.id}`}
-                    </span>
-                    <span 
-                      className="font-bold text-slate-500 leading-tight mt-0.5"
-                      style={{
-                        fontSize: `${Math.round((isProjectionMode ? 10 : 9) * scale)}px`
-                      }}
-                    >
-                      Pri: {proc.priority}
-                    </span>
-                    <span 
-                      className="font-mono font-extrabold text-indigo-700 bg-indigo-50 border border-indigo-100 rounded mt-0.5 leading-none"
-                      style={{
-                        fontSize: `${Math.round((isProjectionMode ? 10 : 8) * scale)}px`,
-                        padding: `${Math.max(1, Math.round(scale * 1.5))}px ${Math.max(2, Math.round(scale * 3.5))}px`
-                      }}
-                    >
-                      T: {proc.remainingTime}s
-                    </span>
+                      <span
+                        className="font-black truncate w-full text-center"
+                        style={{ 
+                          color: proc.color,
+                          fontSize: `${Math.round((isProjectionMode ? 13 : 11) * scale)}px`
+                        }}
+                      >
+                        {isProjectionMode ? (proc.name || `Processo ${proc.id}`) : `P${proc.id}`}
+                      </span>
+                      <span 
+                        className="font-bold text-slate-500 leading-tight mt-0.5"
+                        style={{
+                          fontSize: `${Math.round((isProjectionMode ? 10 : 9) * scale)}px`
+                        }}
+                      >
+                        Pri: {proc.priority}
+                      </span>
+                      <span 
+                        className="font-mono font-extrabold text-indigo-700 bg-indigo-50 border border-indigo-100 rounded mt-0.5 leading-none"
+                        style={{
+                          fontSize: `${Math.round((isProjectionMode ? 10 : 8) * scale)}px`,
+                          padding: `${Math.max(1, Math.round(scale * 1.5))}px ${Math.max(2, Math.round(scale * 3.5))}px`
+                        }}
+                      >
+                        T: {proc.remainingTime}s
+                      </span>
+                    </motion.div>
                   </motion.div>
                 );
               })}
