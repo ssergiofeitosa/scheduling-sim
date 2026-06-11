@@ -155,8 +155,9 @@ export default function HeapVisualizer({
                       y2: e.y2,
                       opacity: 1
                     }}
-                    stroke="rgba(79,70,229,0.15)"
-                    strokeWidth={2}
+                    stroke="#6366f1"
+                    strokeWidth={3.5}
+                    strokeOpacity={0.65}
                     initial={{ opacity: 0 }}
                     transition={{
                       type: 'spring',
@@ -207,10 +208,10 @@ export default function HeapVisualizer({
                     <motion.div
                       layoutId={`process-card-${proc.id}`}
                       transition={{ type: 'tween', duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
-                      className={`w-full h-full flex flex-col items-center justify-center rounded-2xl border-2 transition-all duration-300 ${
+                      className={`w-full h-full flex flex-col items-center justify-center rounded-2xl transition-all duration-300 bg-white ${
                         isHighlighted
-                          ? 'border-amber-400 bg-amber-50 shadow-md shadow-amber-200/50'
-                          : 'border-slate-200 bg-slate-50/50 shadow-sm hover:border-slate-300'
+                          ? 'border-[3px] border-amber-500 bg-amber-50/80 shadow-md shadow-amber-300/40'
+                          : 'border-2 border-slate-350 shadow-sm hover:border-slate-500'
                       }`}
                     >
                       <span
