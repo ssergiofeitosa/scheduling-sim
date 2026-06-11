@@ -188,70 +188,71 @@ export default function ProcessForm({
       </div>
 
       {/* ── Playback Controls ──────────────────── */}
-      <div className="border-t border-slate-100 pt-4 mt-auto flex flex-col gap-3">
-        <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+      <div className="border-t border-slate-100 pt-4 mt-auto flex flex-col gap-4">
+        <h3 className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 text-center">
           Controle da Simulação
         </h3>
         
-        <div className="flex items-center justify-between gap-3">
-          {/* Action buttons */}
-          <div className="flex items-center gap-1.5">
-            {/* Play/Pause */}
-            {isRunning ? (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={onPause}
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors shadow-md"
-                title="Pausar"
-              >
-                <Pause className="h-4 w-4" />
-              </motion.button>
-            ) : (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={onPlay}
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors shadow-md"
-                title="Reproduzir"
-              >
-                <Play className="h-4 w-4" />
-              </motion.button>
-            )}
+        {/* Playback Buttons Group */}
+        <div className="flex items-center justify-center gap-3 py-1">
+          {/* Reset */}
+          <motion.button
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
+            onClick={onReset}
+            className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-600 text-white hover:bg-red-700 transition-all shadow-md shadow-red-600/20 hover:shadow-red-600/30 border-0 cursor-pointer"
+            title="Reiniciar Simulação"
+          >
+            <RotateCcw className="h-5 w-5" />
+          </motion.button>
 
-            {/* Step */}
+          {/* Play/Pause */}
+          {isRunning ? (
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={onStep}
-              disabled={isRunning}
-              className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-md disabled:bg-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Avançar 1 ciclo"
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={onPause}
+              className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500 text-white hover:bg-amber-600 transition-all shadow-md shadow-amber-500/20 hover:shadow-amber-500/30 border-0 cursor-pointer"
+              title="Pausar"
             >
-              <SkipForward className="h-4 w-4" />
+              <Pause className="h-5 w-5" />
             </motion.button>
-
-            {/* Reset */}
+          ) : (
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={onReset}
-              className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors shadow-md"
-              title="Reiniciar Simulação"
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={onPlay}
+              className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-600 text-white hover:bg-green-700 transition-all shadow-md shadow-green-600/20 hover:shadow-green-600/30 border-0 cursor-pointer"
+              title="Reproduzir"
             >
-              <RotateCcw className="h-4 w-4" />
+              <Play className="h-5 w-5 ml-0.5" />
             </motion.button>
-          </div>
+          )}
 
-          {/* Speed display */}
-          <span className="font-mono text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100/30 px-2 py-0.5 rounded-md shrink-0">
-            {speed}ms
-          </span>
+          {/* Step */}
+          <motion.button
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
+            onClick={onStep}
+            disabled={isRunning}
+            className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-all shadow-md shadow-indigo-600/20 hover:shadow-indigo-600/30 disabled:bg-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed border-0 cursor-pointer"
+            title="Avançar 1 ciclo (Passo a Passo)"
+          >
+            <SkipForward className="h-5 w-5" />
+          </motion.button>
         </div>
 
-        {/* Speed Slider */}
-        <div className="flex items-center gap-2 mt-1">
-          <Gauge className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+        {/* Speed Slider & Speed Label */}
+        <div className="flex flex-col gap-1.5 mt-1">
+          <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
+            <span className="flex items-center gap-1.5">
+              <Gauge className="h-3.5 w-3.5 text-slate-450 shrink-0" />
+              Velocidade do Relógio
+            </span>
+            <span className="font-mono text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-100/50 px-2 py-0.5 rounded-md">
+              {speed}ms
+            </span>
+          </div>
           <input
             type="range"
             min={100}

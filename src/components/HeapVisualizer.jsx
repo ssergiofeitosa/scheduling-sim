@@ -1,34 +1,34 @@
-import { GitBranch, Inbox } from 'lucide-react';
+import { GitBranch, Inbox, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useMemo } from 'react';
-
+ 
 function computePositions(heapSize, containerWidth, nodeW, levelGap) {
   const positions = [];
   if (heapSize === 0) return positions;
-
+ 
   for (let i = 0; i < heapSize; i++) {
     const level = Math.floor(Math.log2(i + 1));
     const indexInLevel = i - (Math.pow(2, level) - 1);
     const nodesInLevel = Math.pow(2, level);
-
+ 
     const availableWidth = Math.max(containerWidth, 300);
     const spacing = availableWidth / (nodesInLevel + 1);
-
+ 
     const x = spacing * (indexInLevel + 1) - nodeW / 2;
     const y = level * levelGap + 20;
-
+ 
     positions.push({ x, y, level });
   }
-
+ 
   return positions;
 }
-
+ 
 function getEdges(heapSize, positions, nodeW, nodeH) {
   const edges = [];
   for (let i = 0; i < heapSize; i++) {
     const left = 2 * i + 1;
     const right = 2 * i + 2;
-
+ 
     if (left < heapSize) {
       edges.push({
         x1: positions[i].x + nodeW / 2,
@@ -48,24 +48,28 @@ function getEdges(heapSize, positions, nodeW, nodeH) {
   }
   return edges;
 }
-
+ 
 export default function HeapVisualizer({
   heap = [],
   highlightedIndices = [],
   isProjectionMode,
 }) {
   const [zoomLevel, setZoomLevel] = useState(0); // 0 = 1.0x, 1 = 1.2x, 2 = 1.4x, 3 = 1.6x
-
+ 
   const baseNodeW = isProjectionMode ? 92 : 70;
   const baseNodeH = isProjectionMode ? 92 : 70;
   const baseLevelGap = isProjectionMode ? 105 : 85;
-
+ 
   const scale = 1 + zoomLevel * 0.2; // 1.0x, 1.2x, 1.4x, 1.6x
   const NODE_W = Math.round(baseNodeW * scale);
   const NODE_H = Math.round(baseNodeH * scale);
   const LEVEL_GAP = Math.round(baseLevelGap * (1 + zoomLevel * 0.15));
-
-  const containerWidth = Math.round(520 * (1 + zoomLevel * 0.25));
+ 
+  const maxLevel = heap.length > 0 ? Math.floor(Math.log2(heap.length)) : 0;
+  const minSpacing = NODE_W + 14; // Compact spacing that still prevents overlaps
+  const requiredWidthForLevel = minSpacing * (Math.pow(2, maxLevel) + 1);
+  const containerWidth = Math.max(520, requiredWidthForLevel);
+ 
   const positions = useMemo(
     () => computePositions(heap.length, containerWidth, NODE_W, LEVEL_GAP),
     [heap.length, containerWidth, NODE_W, LEVEL_GAP]
@@ -74,10 +78,9 @@ export default function HeapVisualizer({
     () => getEdges(heap.length, positions, NODE_W, NODE_H),
     [heap.length, positions, NODE_W, NODE_H]
   );
-
-  const maxLevel = heap.length > 0 ? Math.floor(Math.log2(heap.length)) : 0;
+ 
   const svgHeight = (maxLevel + 1) * LEVEL_GAP + NODE_H + 40;
-
+ 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm h-full flex flex-col">
       {/* ── Header ─────────────────────────────── */}
@@ -105,12 +108,12 @@ export default function HeapVisualizer({
           {zoomLevel === 2 && "Zoom: 1.4x"}
           {zoomLevel === 3 && "Zoom: 1.6x"}
         </button>
-
+ 
         <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-500">
           {heap.length} {heap.length === 1 ? 'nó' : 'nós'}
         </span>
       </div>
-
+ 
       {/* ── Tree ───────────────────────────────── */}
       <div className="overflow-auto flex-1 min-h-0">
         <AnimatePresence mode="popLayout">
@@ -139,6 +142,23 @@ export default function HeapVisualizer({
                 height: svgHeight,
               }}
             >
+              {/* CPU Indicator next to root node */}
+              {positions[0] && (
+                <motion.div
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="absolute flex items-center gap-1 bg-indigo-50 border border-indigo-100 rounded-lg px-2 py-1 shadow-sm z-10 select-none"
+                  style={{
+                    top: positions[0].y + (NODE_H / 2) - 14,
+                    left: Math.max(10, positions[0].x - 85),
+                  }}
+                >
+                  <span className="text-[10px] font-black uppercase text-indigo-700 tracking-wider">
+                    CPU
+                  </span>
+                  <ArrowLeft className="h-3.5 w-3.5 text-indigo-600 animate-pulse shrink-0" />
+                </motion.div>
+              )}
               {/* SVG Edges */}
               <svg
                 className="absolute inset-0 pointer-events-none"

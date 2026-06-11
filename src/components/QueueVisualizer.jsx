@@ -1,4 +1,4 @@
-import { ListOrdered, ArrowRight, Inbox } from 'lucide-react';
+import { ListOrdered, ArrowLeft, Inbox } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function QueueVisualizer({ queue, algorithm, isProjectionMode }) {
@@ -17,6 +17,20 @@ export default function QueueVisualizer({ queue, algorithm, isProjectionMode }) 
 
       {/* ── Queue Row ──────────────────────────── */}
       <div className="flex-1 flex items-center gap-2 overflow-x-auto pb-2 min-h-0">
+        {/* Flow arrow to CPU */}
+        {queue.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="mr-2 flex shrink-0 items-center gap-1.5"
+          >
+            <span className="rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100 px-2 py-0.5 text-[10px] font-bold">
+              CPU
+            </span>
+            <ArrowLeft className="h-3.5 w-3.5 text-indigo-500 shrink-0" />
+          </motion.div>
+        )}
+
         <AnimatePresence mode="popLayout">
           {queue.length === 0 ? (
             <motion.div
@@ -38,12 +52,17 @@ export default function QueueVisualizer({ queue, algorithm, isProjectionMode }) 
                 animate={{ x: 0, opacity: 1, scale: 1 }}
                 exit={{ x: -80, scale: 0.8 }}
                 transition={{ type: 'tween', duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
-                className="group relative flex shrink-0 items-center gap-3"
+                className="group relative flex shrink-0 items-center gap-2"
               >
+                {/* Arrow pointing left (towards the CPU / head of the queue) */}
+                {index > 0 && (
+                  <ArrowLeft className="h-3.5 w-3.5 shrink-0 text-slate-300" />
+                )}
+
                 {/* Process card */}
                 <motion.div
                   layoutId={`process-card-${proc.id}`}
-                  transition={{ type: 'tween', duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+                  transition={{ type: 'tween', duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
                   className={`transition-all flex flex-col justify-between items-center rounded-xl border bg-white shadow-sm transition-colors ${
                     isProjectionMode
                       ? 'w-44 h-[110px] p-3.5 border-slate-300 border-2'
@@ -82,29 +101,10 @@ export default function QueueVisualizer({ queue, algorithm, isProjectionMode }) 
                     </div>
                   </div>
                 </motion.div>
-
-                {/* Arrow */}
-                {index < queue.length - 1 && (
-                  <ArrowRight className="h-3.5 w-3.5 shrink-0 text-slate-300" />
-                )}
               </motion.div>
             ))
           )}
         </AnimatePresence>
-
-        {/* Flow arrow to CPU */}
-        {queue.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="ml-2 flex shrink-0 items-center gap-1.5"
-          >
-            <div className="h-px w-6 bg-gradient-to-r from-slate-200 to-indigo-500" />
-            <span className="rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100 px-2 py-0.5 text-[10px] font-bold">
-              → CPU
-            </span>
-          </motion.div>
-        )}
       </div>
     </div>
   );
