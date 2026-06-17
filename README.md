@@ -1,16 +1,64 @@
-# React + Vite
+# Simulador de Algoritmos de Escalonamento
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Projeto desenvolvido na disciplina de **Algoritmos e Estruturas de Dados (AED)**, ministrada pela professora **Ana Emília**, com o objetivo de simular o funcionamento de diferentes algoritmos de escalonamento de processos utilizados em Sistemas Operacionais.
 
-Currently, two official plugins are available:
+## 📖 Sobre o projeto
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+O simulador permite visualizar e analisar o comportamento de algoritmos de escalonamento a partir da execução de processos com diferentes características, auxiliando no entendimento dos conceitos teóricos estudados em sala de aula.
 
-## React Compiler
+A aplicação busca tornar o aprendizado mais intuitivo por meio de uma interface interativa, permitindo acompanhar a ordem de execução dos processos e comparar o desempenho dos algoritmos implementados.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ✨ Funcionalidades
 
-## Expanding the ESLint configuration
+- Simulação de algoritmos de escalonamento;
+- Inserção e gerenciamento de processos;
+- Visualização da ordem de execução;
+- Comparação entre algoritmos;
+- Interface interativa para fins educacionais.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+> **Obs.:** As funcionalidades podem variar de acordo com os algoritmos implementados no projeto.
+
+## 🛠️ Tecnologias utilizadas
+
+- React
+- TypeScript
+
+## 🚀 Como executar o projeto
+
+### Pré-requisitos
+
+- Node.js (versão 18 ou superior)
+- npm ou yarn
+
+### Instalação
+
+Clone o repositório:
+
+```bash
+git clone https://github.com/ssergiofeitosa/scheduling-sim
+```
+
+Acesse a pasta do projeto:
+
+```bash
+cd scheduling-sim
+```
+
+Instale as dependências:
+
+```bash
+npm install
+```
+
+Execute a aplicação:
+
+```bash
+npm run dev
+```
+
+A aplicação estará disponível em:
+
+```text
+http://localhost:5173
+```
+
